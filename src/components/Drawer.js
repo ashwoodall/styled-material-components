@@ -5,12 +5,7 @@ import elevation from '../mixins/elevation';
 import { Portal } from '../components/Portal';
 
 const drawerSizing = css`
-  width: calc(100% - 56px);
-  max-width: 280px;
-  @media (min-width: 600px) {
-    width: calc(100% - 64px);
-    max-width: 320px;
-  }
+  width: 240px;
 `;
 
 // eslint-disable-next-line no-unused-expressions
@@ -21,7 +16,7 @@ injectGlobal`
         &:after {
           content: "";
           ${drawerSizing}
-          display: inline-flex;
+          display: inline-table;
           box-sizing: border-box;
         }
       }
@@ -29,7 +24,7 @@ injectGlobal`
         &:before {
           content: "";
           ${drawerSizing}
-          display: inline-flex;
+          display: inline-table;
           box-sizing: border-box;
         }
       }
@@ -66,7 +61,10 @@ const StyledDrawer = styled(BaseDrawer)`
   flex-direction: column;
   box-sizing: border-box;
   touch-action: none;
-  ${props => props.temporary && `z-index: 5`}
+  ${props => props.temporary && `
+    width: 320px;
+    z-index: 5
+  `};
 
   &.left {
     left: 0;
@@ -77,7 +75,9 @@ const StyledDrawer = styled(BaseDrawer)`
   &.right {
     right: 0;
     transform: translateX(107%);
-    ${props => !props.temporary && `border-left: 1px solid rgba(0,0,0,0.35);`}
+    ${props => !props.temporary && `
+      border-left: 1px solid rgba(0,0,0,0.35);
+    `};
   }
 
   &.open {
@@ -99,7 +99,11 @@ export const Drawer = ({
     attachment={attachment}
     onRequestClose={handleRequestClose}
     renderContents={() => (
-      <StyledDrawer attachment={attachment} open={open}>
+      <StyledDrawer
+        attachment={attachment}
+        open={open}
+        temporary={temporary}
+      >
         {children}
       </StyledDrawer>
     )} />
@@ -112,3 +116,4 @@ Drawer.defaultProps = {
   handleRequestClose: () => {},
 };
 
+export default Drawer;

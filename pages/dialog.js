@@ -1,56 +1,80 @@
 import React, { Component } from 'react';
-import Button from '../src/components/Button';
-import { Dialog, DialogTitle, DialogBody, DialogFooter } from '../src/components/Dialog';
-import MaterialThemeProvider from '../src/theme/ThemeProvider';
+import { Button, Dialog, DialogTitle, DialogBody, DialogFooter, ThemeProvider } from '../src';
 
-class ExampleDialog extends Component {
-  state = {
-    open: false
-  };
-
-  openDialog = () => this.setState({ open: true });
-
-  closeDialog = () => this.setState({ open: false });
-
-  render() {
-    const { open, title, body } = this.props;
-    return (
-      <div>
-        <Dialog open={this.state.open}>
-          {Boolean(title) && (
-            <DialogTitle>
-              {title}
-            </DialogTitle>
-          )}
-          <DialogBody>
-            Dialog body goes here
-          </DialogBody>
-          <DialogFooter>
-            <Button onClick={this.closeDialog}>
-              Cancel
-            </Button>
-            <Button onClick={this.closeDialog}>
-              Confirm
-            </Button>
-          </DialogFooter>
-        </Dialog>
-        <Button onClick={this.openDialog}>
-          Open dialog
-        </Button>
-      </div>
-    )
-  }
-}
-
-const DialogPage = () => (
-  <MaterialThemeProvider>
-    <div>
-      <h1>Dialog with title</h1>
-      <ExampleDialog title='Dialog title' />
-      <h1>Dialog without title</h1>
-      <ExampleDialog />
-    </div>
-  </MaterialThemeProvider>
+const ExampleDialog = ({ title, closeDialog, ...dialogProps }) => (
+  <Dialog {...dialogProps}>
+    {Boolean(title) && (
+      <DialogTitle>
+        {title}
+      </DialogTitle>
+    )}
+    <DialogBody>
+      Dialog body goes here
+    </DialogBody>
+    <DialogFooter>
+      <Button onClick={closeDialog}>
+        Cancel
+      </Button>
+      <Button onClick={closeDialog}>
+        Confirm
+      </Button>
+    </DialogFooter>
+  </Dialog>
 );
 
-export default DialogPage;
+export default class dialogsPage extends Component {
+  state = {
+    withTitle: false,
+    withoutTitle: false,
+    left: false,
+    right: false,
+  };
+
+  closeDialog = id => this.setState({
+    [id]: false,
+  });
+
+  openDialog = id => this.setState({
+    [id]: true,
+  });
+
+  render() {
+    return (
+      <ThemeProvider>
+        <div>
+          <ExampleDialog
+            open={this.state.withTitle}
+            closeDialog={() => this.closeDialog('withTitle')}
+            title="a title"
+            onClose={() => this.closeDialog('withTitle')} />
+          <ExampleDialog
+            open={this.state.withoutTitle}
+            closeDialog={() => this.closeDialog('withoutTitle')} 
+            onClose={() => this.closeDialog('withoutTitle')} />
+          <ExampleDialog
+            fullscreen
+            attachment="left"
+            open={this.state.left}
+            closeDialog={() => this.closeDialog('left')} />
+          <ExampleDialog
+            fullscreen
+            attachment="right"
+            open={this.state.right}
+            closeDialog={() => this.closeDialog('right')} />
+          <Button onClick={() => this.openDialog('withTitle')}>
+            Open a dialog with a title
+          </Button>
+          <Button onClick={() => this.openDialog('withoutTitle')}>
+            Open a dialog without a title
+          </Button>
+          <Button onClick={() => this.openDialog('left')}>
+            Open a full screen dialog from the left
+          </Button>
+          <Button onClick={() => this.openDialog('right')}>
+            Open a full screen dialog from the right
+          </Button>
+        </div>
+      </ThemeProvider>
+    );
+  }
+}
